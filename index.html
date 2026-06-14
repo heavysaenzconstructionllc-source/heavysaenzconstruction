@@ -509,6 +509,7 @@ var cpref = 'text';
 var lmap = null;
 var lmarker = null;
 var PILOT = [30.1836, -97.7482];
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbzJp4zj4GXeTOnHgKUU9YYMHWfxC45Xp0LDqk-tIRS5aaGf1vQ8L86H7prC2W8LVU6M/exec';
 
 function init() {
   document.getElementById('btn-en').addEventListener('click', function() { go('en'); });
@@ -991,6 +992,42 @@ function doSubmit() {
   answers.email = ((document.getElementById('CE') || {}).value || '').trim();
 
   var title = lang === 'es' ? curFlow.title_es : curFlow.title_en;
+
+  // Build estimated price string for delivery flow
+  var estPrice = '';
+  if (curFlow.title_en === 'MATERIAL DELIVERY' && answers.miles) {
+    var mp = answers.matPrice || 14;
+    var ld = answers.loads || 1;
+    var base = (18 * mp + 3.5 * answers.miles) * ld * 1.2692;
+    var tot = Math.round(base / 5) * 5;
+    var lo = Math.round(tot * 0.88 / 5) * 5;
+    var hi = Math.round(tot * 1.12 / 5) * 5;
+    estPrice = '$' + lo.toLocaleString() + ' - $' + hi.toLocaleString();
+  } else {
+    estPrice = 'Custom Quote';
+  }
+
+  // Send to Google Sheet
+  var payload = {
+    service: curFlow.title_en,
+    name: answers.name,
+    phone: answers.phone,
+    email: answers.email,
+    address: answers.addr || '',
+    contactPref: cpref,
+    photoCount: photos.length,
+    miles: answers.miles ? answers.miles.toFixed(1) : '',
+    estPrice: estPrice
+  };
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).catch(function(err) {
+    console.log('Sheet submit error:', err);
+  });
+
   var rows = [
     [s('sk'), title],
     [s('sn'), answers.name],
