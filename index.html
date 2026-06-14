@@ -126,6 +126,7 @@ nav.show{display:flex}
 </style>
 </head>
 <body>
+<iframe name="hsc_hidden_frame" style="display:none"></iframe>
 
 <div id="LANG">
   <div class="ll">HEAVY SAENZ<br><em>CONSTRUCTION</em></div>
@@ -1020,13 +1021,33 @@ function doSubmit() {
     estPrice: estPrice
   };
 
+  // Use no-cors mode for maximum mobile browser compatibility
   fetch(SHEET_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload)
   }).catch(function(err) {
     console.log('Sheet submit error:', err);
   });
+
+  // Fallback: also try via hidden form (works even if fetch is blocked)
+  try {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SHEET_URL;
+    form.target = 'hsc_hidden_frame';
+    form.style.display = 'none';
+    var inp = document.createElement('input');
+    inp.name = 'payload';
+    inp.value = JSON.stringify(payload);
+    form.appendChild(inp);
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function() { document.body.removeChild(form); }, 1000);
+  } catch (e2) {
+    console.log('Form fallback error:', e2);
+  }
 
   var rows = [
     [s('sk'), title],
