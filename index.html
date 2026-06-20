@@ -53,6 +53,12 @@ nav.show{display:flex}
 .serve-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:.6rem}
 .stags{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:2rem}
 .stag{background:rgba(168,120,62,.08);border:1px solid rgba(168,120,62,.3);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--gold2);font-weight:600}
+#service-map{width:100%;max-width:640px;height:420px;margin:0 auto;border-radius:14px;border:2px solid var(--gold);overflow:hidden;position:relative}
+.town-label{background:rgba(9,9,11,.85)!important;border:none!important;color:#e0cca6!important;font-size:11px!important;font-weight:600!important;padding:2px 7px!important;border-radius:4px!important;box-shadow:none!important;font-family:'DM Sans',sans-serif!important}
+.town-label::before{display:none!important}
+.hq-label{background:rgba(9,9,11,.92)!important;border:1px solid var(--gold)!important;color:#f5dcae!important;font-size:12px!important;font-weight:700!important;padding:3px 9px!important;border-radius:5px!important;box-shadow:none!important;font-family:'DM Sans',sans-serif!important}
+.hq-label::before{display:none!important}
+@media(max-width:540px){#service-map{height:340px}}
 .cats{max-width:960px;margin:0 auto;padding:0 1.2rem 4rem}
 .catlbl{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:1.4rem;font-weight:700}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
@@ -181,7 +187,7 @@ nav.show{display:flex}
       <h1 class="hh1" id="HH1"><em>FREE ESTIMATE</em><br>IN 60 SECONDS</h1>
       <p class="hsub" id="HSUB">Tell us what you need. Upload photos. Get a real price.</p>
       <div class="serve-label" id="SERVELBL">Areas We Serve</div>
-      <div class="stags"><span class="stag">Bastrop</span><span class="stag">Austin</span><span class="stag">Elgin</span><span class="stag">Smithville</span><span class="stag">Cedar Creek</span><span class="stag">Lockhart</span><span class="stag">La Grange</span><span class="stag">Round Top</span><span class="stag">+ More</span></div>
+      <div id="service-map"></div>
     </div>
   </div>
   <div class="cats"><div class="catlbl" id="CLBL">What do you need?</div><div class="catgrid" id="CATGRID"></div></div>
@@ -257,7 +263,7 @@ steps:[{id:'type',type:'opts',cols:2,qen:'What are you building?',qes:'\u00bfQu\
 {id:'address',type:'address'},{id:'contact',type:'contact'}]},
 clearing:{title_en:'LAND CLEARING',title_es:'LIMPIEZA DE TERRENO',
 port:[{imgKey:'clearing_cedar',cap:'Land Clearing - Cedar Creek, TX'},{imgKey:'clearing_8336',cap:'Land Clearing - Bastrop, TX'},{imgKey:'clearing_smithville',cap:'Land Clearing - Smithville, TX'},{imgKey:'clearing_lockhart',cap:'Land Clearing - Lockhart, TX'}],
-steps:[{id:'what',type:'opts',cols:2,qen:'What needs clearing?',qes:'\u00bfQu\u00e9 necesita limpieza?',opts:[{en:'Limpieza Completa - Complete Clearing',es:'Limpieza Completa'},{en:'Brush and Scrub',es:'Maleza y Arbustos'},{en:'Cedar Trees',es:'\u00c1rboles de Cedro'},{en:'Large Trees',es:'\u00c1rboles Grandes'},{en:'Mixed Vegetation',es:'Vegetaci\u00f3n Mixta'}]},
+steps:[{id:'what',type:'opts',cols:2,qen:'What needs clearing?',qes:'\u00bfQu\u00e9 necesita limpieza?',opts:[{en:'Complete Clearing',es:'Limpieza Completa'},{en:'Brush and Scrub',es:'Maleza y Arbustos'},{en:'Cedar Trees',es:'\u00c1rboles de Cedro'},{en:'Large Trees',es:'\u00c1rboles Grandes'},{en:'Mixed Vegetation',es:'Vegetaci\u00f3n Mixta'}]},
 {id:'size',type:'opts',cols:2,qen:'Property size?',qes:'\u00bfTama\u00f1o de la propiedad?',opts:[{en:'Under 1 Acre',es:'Menos de 1 Acre'},{en:'1-5 Acres',es:'1-5 Acres'},{en:'5-10 Acres',es:'5-10 Acres'},{en:'10+ Acres',es:'10+ Acres'}]},
 {id:'goal',type:'opts',cols:2,qen:'What is your goal?',qes:'\u00bfCu\u00e1l es tu objetivo?',opts:[{en:'Build a House',es:'Construir una Casa'},{en:'Improve Access',es:'Mejorar Acceso'},{en:'Fence Installation',es:'Instalaci\u00f3n de Cerca'},{en:'General Cleanup',es:'Limpieza General'}]},
 {id:'photos',type:'photos',hien:'Take photos from multiple angles - show the tree line, brush density, and any structures nearby. Walk the property edges so we can see the full scope of what needs clearing.',hies:'Toma fotos desde varios ángulos - muestra la línea de árboles, la densidad del matorral y estructuras cercanas.'},
@@ -285,7 +291,58 @@ var lmap=null,lmarker=null,lroute=null,revealMap=null;
 var PILOT=[30.1836,-97.7482];
 var calViewYear=null,calViewMonth=null;
 var SHEET_URL='https://script.google.com/macros/s/AKfycbxfCwPOkMP9ogzbbLN2HWL6M1Ai1S6DoalTf1zGFbsAjybi0CsujzWYh7MMCHoA9xbtNw/exec';
-function init(){document.getElementById('btn-en').addEventListener('click',function(){go('en');});document.getElementById('btn-es').addEventListener('click',function(){go('es');});document.getElementById('LT').addEventListener('click',swLang);document.getElementById('NCTA').addEventListener('click',showHome);document.getElementById('BKBTN').addEventListener('click',goBack);document.getElementById('CNFB').addEventListener('click',showHome);buildCats();}
+function init(){document.getElementById('btn-en').addEventListener('click',function(){go('en');});document.getElementById('btn-es').addEventListener('click',function(){go('es');});document.getElementById('LT').addEventListener('click',swLang);document.getElementById('NCTA').addEventListener('click',showHome);document.getElementById('BKBTN').addEventListener('click',goBack);document.getElementById('CNFB').addEventListener('click',showHome);buildCats();initServiceMap();}
+
+function initServiceMap(){
+  var el = document.getElementById('service-map');
+  if(!el || typeof L === 'undefined') return;
+  var smap = L.map('service-map', {
+    zoomControl: false, scrollWheelZoom: false, dragging: false,
+    doubleClickZoom: false, touchZoom: false, boxZoom: false, keyboard: false,
+    tap: false
+  }).setView([30.1100, -97.3155], 9.3);
+
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19
+  }).addTo(smap);
+
+  var PILOT = [30.1836, -97.7482];
+
+  L.circle(PILOT, {
+    radius: 56327,
+    color: '#e0b478', weight: 2, dashArray: '8 6',
+    fillColor: '#a8783e', fillOpacity: 0.08
+  }).addTo(smap);
+
+  var hqIcon = L.divIcon({
+    html: '<div style="width:16px;height:16px;background:#e0b478;border:2px solid #0c0a07;border-radius:50%;box-shadow:0 0 10px rgba(224,180,120,.7)"></div>',
+    iconSize: [16,16], iconAnchor: [8,8], className: ''
+  });
+  L.marker(PILOT, {icon: hqIcon}).addTo(smap)
+    .bindTooltip('Bastrop (HQ)', {permanent: true, direction: 'top', className: 'hq-label', offset: [0,-8]});
+
+  var towns = [
+    ['Austin', 30.2672, -97.7431],
+    ['Round Rock', 30.5083, -97.6789],
+    ['Elgin', 30.3494, -97.3717],
+    ['Manor', 30.3380, -97.5564],
+    ['Del Valle', 30.1916, -97.6280],
+    ['Cedar Creek', 30.1494, -97.4986],
+    ['Smithville', 30.0085, -97.1572],
+    ['Lockhart', 29.8858, -97.6700],
+    ['Dale', 29.8216, -97.5447],
+    ['La Grange', 29.9058, -96.8761]
+  ];
+
+  towns.forEach(function(t){
+    var icon = L.divIcon({
+      html: '<div style="width:8px;height:8px;background:#c9985c;border:1.5px solid #0c0a07;border-radius:50%"></div>',
+      iconSize: [8,8], iconAnchor: [4,4], className: ''
+    });
+    L.marker([t[1], t[2]], {icon: icon}).addTo(smap)
+      .bindTooltip(t[0], {permanent: true, direction: 'top', className: 'town-label', offset: [0,-6]});
+  });
+}
 function go(l){lang=l;document.getElementById('LANG').classList.add('gone');document.getElementById('NAV').classList.add('show');applyLang();showHome();}
 function swLang(){lang=lang==='en'?'es':'en';applyLang();buildCats();if(curFlow)renderStep();}
 function applyLang(){document.getElementById('LTLABEL').textContent=lang==='en'?'Espa\u00f1ol':'English';document.getElementById('LTFLAG').textContent=lang==='en'?'\ud83c\uddf2\ud83c\uddfd':'\ud83c\uddfa\ud83c\uddf8';document.getElementById('NCTA').textContent=s('fre');document.getElementById('HSUB').textContent=s('hsub');document.getElementById('CLBL').textContent=s('catlbl');document.getElementById('HBADGE').textContent=s('hbadge');document.getElementById('HH1').innerHTML='<em>'+s('hh1_em')+'</em><br>'+s('hh1_rest');document.getElementById('SERVELBL').textContent=s('servelbl');document.getElementById('BKBTN').textContent='\u2190 '+s('bk');document.getElementById('NCTA').textContent=s('fre');}
@@ -298,24 +355,14 @@ function renderOpts(body,step){var q=document.createElement('div');q.className='
 function renderCounter(body,step){var q=document.createElement('div');q.className='sq';q.textContent=lang==='es'?step.qes:step.qen;body.appendChild(q);if(step.hien||step.hies){var hi=document.createElement('div');hi.className='shint';hi.textContent=lang==='es'?(step.hies||''):(step.hien||'');body.appendChild(hi);}var count=answers.loads||1;var wrap=document.createElement('div');wrap.className='counter-wrap';var minus=document.createElement('button');minus.className='cnt-btn';minus.textContent='-';minus.disabled=count<=1;var numEl=document.createElement('div');numEl.className='cnt-num';numEl.textContent=count;var plus=document.createElement('button');plus.className='cnt-btn';plus.textContent='+';wrap.appendChild(minus);wrap.appendChild(numEl);wrap.appendChild(plus);body.appendChild(wrap);var info=document.createElement('div');info.className='cnt-info';function updateInfo(){info.innerHTML='<strong>'+(count*18).toLocaleString()+(lang==='es'?' toneladas':' tons')+'</strong><em>'+count+(count===1?(lang==='es'?' cam\u00f3n':' truck'):(lang==='es'?' camiones':' trucks'))+'</em>';}updateInfo();body.appendChild(info);answers.loads=count;function bopIt(){info.classList.remove('cnt-bop');numEl.classList.remove('cnt-bop');void info.offsetWidth;void numEl.offsetWidth;info.classList.add('cnt-bop');numEl.classList.add('cnt-bop');setTimeout(function(){info.classList.remove('cnt-bop');numEl.classList.remove('cnt-bop');},600);}minus.addEventListener('click',function(){if(count<=1)return;count--;numEl.textContent=count;minus.disabled=count<=1;answers.loads=count;updateInfo();bopIt();});plus.addEventListener('click',function(){count++;numEl.textContent=count;minus.disabled=false;answers.loads=count;updateInfo();bopIt();});var nb=document.createElement('button');nb.className='nxtbtn';nb.textContent=s('nxt')+' \u2192';nb.addEventListener('click',advance);body.appendChild(nb);}
 function renderAddress(body){var q=document.createElement('div');q.className='sq';q.textContent=s('addrstep');body.appendChild(q);var hi=document.createElement('div');hi.className='shint';hi.textContent=s('addrhint');body.appendChild(hi);var mapDiv=document.createElement('div');mapDiv.id='fmap';body.appendChild(mapDiv);var wrap=document.createElement('div');wrap.className='fwrap';var lbl=document.createElement('label');lbl.className='flbl';lbl.textContent=s('addrlbl');var inp=document.createElement('input');inp.className='finput';inp.id='ADDRIN';inp.type='text';inp.placeholder=s('addrph');inp.value=answers.addr||'';var geoTimer=null;inp.addEventListener('input',function(){clearTimeout(geoTimer);var val=inp.value.trim();if(val.length<5)return;geoTimer=setTimeout(function(){fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(val+', Texas')).then(function(r){return r.json();}).then(function(d){if(d&&d.length&&lmap){pinIt(parseFloat(d[0].lat),parseFloat(d[0].lon));answers.addr=val;}}).catch(function(){});},900);});wrap.appendChild(lbl);wrap.appendChild(inp);body.appendChild(wrap);var note=document.createElement('div');note.className='addr-note';note.innerHTML=s('addrnote');body.appendChild(note);var nb=document.createElement('button');nb.className='nxtbtn';nb.textContent=s('nxt')+' \u2192';nb.addEventListener('click',geoNext);body.appendChild(nb);setTimeout(function(){var el=document.getElementById('fmap');if(!el)return;if(lmap){try{lmap.remove();}catch(e){}lmap=null;lmarker=null;lroute=null;}lmap=L.map('fmap',{zoomControl:false,scrollWheelZoom:false}).setView(PILOT,9);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(lmap);var pki=L.divIcon({html:'<div style="position:relative"><div style="width:18px;height:18px;background:#d4900f;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(212,144,15,.8)"></div><div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%)" class="map-pin-label">&#x1F4E6; Pilot Knob</div></div>',iconSize:[18,18],iconAnchor:[9,9],className:''});L.marker(PILOT,{icon:pki}).addTo(lmap);if(answers.lat)pinIt(answers.lat,answers.lng);lmap.on('click',function(e){pinIt(e.latlng.lat,e.latlng.lng);});},60);}
 function pinIt(lat,lng){if(lmarker){lmap.removeLayer(lmarker);lmarker=null;}if(lroute){lmap.removeLayer(lroute);lroute=null;}var icon=L.divIcon({html:'<div style="position:relative"><div style="width:18px;height:18px;background:#22c55e;border-radius:50%;border:3px solid #fff;box-shadow:0 0 14px rgba(34,197,94,.9)"></div><div style="position:absolute;top:-28px;left:50%;transform:translateX(-50%)" class="map-pin-label">&#x1F4CD; Drop Off</div></div>',iconSize:[18,18],iconAnchor:[9,9],className:''});lmarker=L.marker([lat,lng],{icon:icon}).addTo(lmap);answers.lat=lat;answers.lng=lng;var R=3958.8,a=PILOT[0],b=PILOT[1];var dL=(lat-a)*Math.PI/180,dN=(lng-b)*Math.PI/180;var x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(a*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dN/2)*Math.sin(dN/2);answers.miles=R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));lroute=L.polyline([PILOT,[lat,lng]],{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.85}).addTo(lmap);lmap.fitBounds(L.latLngBounds([PILOT,[lat,lng]]),{padding:[40,40],maxZoom:12});var el=document.getElementById('fmap');if(el){var old=el.querySelector('.map-badge');if(old)old.remove();var badge=document.createElement('div');badge.className='map-badge';badge.innerHTML='&#x1F69B; '+answers.miles.toFixed(1)+' mi &nbsp;|&nbsp; Pilot Knob &#x2192; Drop Off';el.appendChild(badge);}}
-function showMapReveal(){var miles=answers.miles||0;var hours=miles/55;var timeStr=hours<1?Math.round(hours*60)+(lang==='es'?' min de camino':' min drive'):hours.toFixed(1)+(lang==='es'?' hrs de camino':' hr drive');document.getElementById('mr-miles').textContent=miles.toFixed(1)+' mi';document.getElementById('mr-label').textContent=s('reveal_label');document.getElementById('mr-route').innerHTML='Pilot Knob &#x2192; '+(answers.addr||(lang==='es'?'Tu Ubicaci\u00f3n':'Your Location'));document.getElementById('mr-time').innerHTML='&#x1F69B; '+timeStr+' &nbsp;&middot;&nbsp; '+miles.toFixed(1)+' miles';document.getElementById('mr-continue').textContent=s('reveal_btn')+' \u2192';var el=document.getElementById('map-reveal-map');el.innerHTML='';if(revealMap){try{revealMap.remove();}catch(e){}revealMap=null;}document.getElementById('map-reveal').classList.add('show');setTimeout(function(){revealMap=L.map('map-reveal-map',{zoomControl:false,scrollWheelZoom:false}).setView(PILOT,9);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(revealMap);var pkIcon=L.divIcon({html:'<div style="width:16px;height:16px;background:#d4900f;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(212,144,15,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});var destIcon=L.divIcon({html:'<div style="width:16px;height:16px;background:#22c55e;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(34,197,94,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});L.marker(PILOT,{icon:pkIcon}).addTo(revealMap).bindPopup('Pilot Knob');if(answers.lat){L.marker([answers.lat,answers.lng],{icon:destIcon}).addTo(revealMap).bindPopup(answers.addr||'Drop Off');var pts=[PILOT,[answers.lat,answers.lng]];var route=L.polyline([],{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.9}).addTo(revealMap);revealMap.fitBounds(L.latLngBounds(pts),{padding:[40,40],maxZoom:12});var steps=40,step=0;var timer=setInterval(function(){step++;var f=step/steps;route.addLatLng([PILOT[0]+(answers.lat-PILOT[0])*f,PILOT[1]+(answers.lng-PILOT[1])*f]);if(step>=steps)clearInterval(timer);},35);}},80);document.getElementById('mr-continue').onclick=function(){var overlay=document.getElementById('map-reveal');overlay.style.animation='revealOut .4s ease forwards';setTimeout(function(){overlay.classList.remove('show');overlay.style.animation='';if(revealMap){try{revealMap.remove();}catch(e){}revealMap=null;}advance();},400);};}
-function geoNext(){
-  var inp=document.getElementById('ADDRIN');
-  var addr=inp?inp.value.trim():'';
-  answers.addr=addr;
-  if(answers.lat){showMapReveal();return;}
-  if(addr){
-    var nb=document.querySelector('.nxtbtn');
-    if(nb){nb.textContent=lang==='es'?'Buscando... ⏳':'Locating... ⏳';nb.disabled=true;}
-    fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(addr+', Texas'))
-      .then(function(r){return r.json();})
-      .then(function(d){if(d&&d.length)pinIt(parseFloat(d[0].lat),parseFloat(d[0].lon));showMapReveal();})
-      .catch(function(){advance();});
-  } else {advance();}
+function needsRoute(){
+  return curFlow && (curFlow.title_en === 'MATERIAL DELIVERY' || curFlow.title_en === 'DRIVEWAY / ROAD / PAD');
 }
+
 function showMapReveal(){
   var existing=document.getElementById('hsc-map-reveal');
   if(existing)existing.parentNode.removeChild(existing);
+  var withRoute=needsRoute();
   var miles=answers.miles||0;
   var hours=miles/55;
   var timeStr=hours<1?Math.round(hours*60)+(lang==='es'?' min de camino':' min drive'):hours.toFixed(1)+(lang==='es'?' hrs de camino':' hr drive');
@@ -324,16 +371,23 @@ function showMapReveal(){
   overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:99999;background:#09090b;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto;box-sizing:border-box;';
   var hdg=document.createElement('div');
   hdg.style.cssText='font-family:Bebas Neue,sans-serif;font-size:1.2rem;letter-spacing:.15em;color:#c9985c;margin-bottom:.8rem;';
-  hdg.textContent=lang==='es'?'\uD83D\uDDFA Mapeando tu Ruta...':'\uD83D\uDDFA Mapping Your Route...';
+  hdg.textContent=withRoute
+    ?(lang==='es'?'\uD83D\uDDFA Mapeando tu Ruta...':'\uD83D\uDDFA Mapping Your Route...')
+    :(lang==='es'?'\uD83D\uDDFA Confirmando Ubicaci\u00f3n...':'\uD83D\uDDFA Confirming Your Location...');
   var mapEl=document.createElement('div');
   mapEl.id='hsc-rmap';
   mapEl.style.cssText='width:100%;max-width:580px;height:280px;border-radius:16px;border:2px solid #c9985c;overflow:hidden;box-shadow:0 0 40px rgba(168,120,62,.4);';
   var badge=document.createElement('div');
   badge.style.cssText='background:rgba(9,9,11,.95);border:2px solid #c9985c;border-radius:14px;padding:1.2rem 2rem;margin-top:.8rem;text-align:center;max-width:580px;width:100%;';
-  badge.innerHTML='<div style="font-family:Bebas Neue,sans-serif;font-size:3.5rem;color:#c9985c;line-height:1;letter-spacing:.05em">'+miles.toFixed(1)+' mi</div>'
-    +'<div style="font-size:12px;color:#a1a1aa;margin-top:.2rem;letter-spacing:.06em;text-transform:uppercase">'+(lang==='es'?'Distancia de Entrega':'Delivery Distance')+'</div>'
-    +'<div style="font-size:14px;color:#fafaf9;margin-top:.4rem;font-weight:600">&#x1F4E6; Pilot Knob &#x2192; &#x1F4CD; '+(answers.addr||(lang==='es'?'Tu Ubicaci\u00f3n':'Your Location'))+'</div>'
-    +'<div style="display:inline-block;background:rgba(168,120,62,.12);border:1px solid rgba(168,120,62,.3);border-radius:20px;padding:5px 16px;font-size:13px;color:#c9985c;margin-top:.5rem;font-weight:700">&#x1F69B; '+timeStr+' &nbsp;&middot;&nbsp; '+miles.toFixed(1)+' miles</div>';
+  if(withRoute){
+    badge.innerHTML='<div style="font-family:Bebas Neue,sans-serif;font-size:3.5rem;color:#c9985c;line-height:1;letter-spacing:.05em">'+miles.toFixed(1)+' mi</div>'
+      +'<div style="font-size:12px;color:#a1a1aa;margin-top:.2rem;letter-spacing:.06em;text-transform:uppercase">'+(lang==='es'?'Distancia de Entrega':'Delivery Distance')+'</div>'
+      +'<div style="font-size:14px;color:#fafaf9;margin-top:.4rem;font-weight:600">&#x1F4E6; Pilot Knob &#x2192; &#x1F4CD; '+(answers.addr||(lang==='es'?'Tu Ubicaci\u00f3n':'Your Location'))+'</div>'
+      +'<div style="display:inline-block;background:rgba(168,120,62,.12);border:1px solid rgba(168,120,62,.3);border-radius:20px;padding:5px 16px;font-size:13px;color:#c9985c;margin-top:.5rem;font-weight:700">&#x1F69B; '+timeStr+' &nbsp;&middot;&nbsp; '+miles.toFixed(1)+' miles</div>';
+  } else {
+    badge.innerHTML='<div style="font-size:14px;color:#fafaf9;margin-top:.2rem;font-weight:600">&#x1F4CD; '+(answers.addr||(lang==='es'?'Tu Ubicaci\u00f3n':'Your Location'))+'</div>'
+      +'<div style="font-size:12px;color:#a1a1aa;margin-top:.5rem">'+(lang==='es'?'Confirmamos la ubicaci\u00f3n exacta de tu proyecto.':'We have confirmed your exact project location.')+'</div>';
+  }
   var btn=document.createElement('button');
   btn.style.cssText='background:linear-gradient(90deg,#a8783e,#e0b478,#c9985c,#f5d08a,#a8783e);background-size:300% auto;color:#000;border:none;padding:14px 36px;border-radius:10px;font-family:Bebas Neue,sans-serif;font-size:1.2rem;letter-spacing:.08em;cursor:pointer;margin-top:.8rem;animation:shimmer 10s linear infinite;font-weight:700;';
   btn.textContent=(lang==='es'?'SE VE BIEN':'LOOKS GOOD')+' \u2192';
@@ -342,53 +396,57 @@ function showMapReveal(){
   setTimeout(function(){
     var rm=null;
     if(typeof L!=='undefined'){
-      rm=L.map('hsc-rmap',{zoomControl:false,scrollWheelZoom:false}).setView([30.1836,-97.7482],9);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(rm);
-      var pkI=L.divIcon({html:'<div style="width:16px;height:16px;background:#d4900f;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(212,144,15,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
-      var dtI=L.divIcon({html:'<div style="width:16px;height:16px;background:#22c55e;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(34,197,94,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
-      L.marker([30.1836,-97.7482],{icon:pkI}).addTo(rm);
-      if(answers.lat){
-        L.marker([answers.lat,answers.lng],{icon:dtI}).addTo(rm);
-        var pts=[[30.1836,-97.7482],[answers.lat,answers.lng]];
-        rm.fitBounds(L.latLngBounds(pts),{padding:[50,50],maxZoom:13});
+      if(withRoute){
+        rm=L.map('hsc-rmap',{zoomControl:false,scrollWheelZoom:false}).setView([30.1836,-97.7482],9);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(rm);
+        var pkI=L.divIcon({html:'<div style="width:16px;height:16px;background:#d4900f;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(212,144,15,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
+        var dtI=L.divIcon({html:'<div style="width:16px;height:16px;background:#22c55e;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(34,197,94,.9)"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
+        L.marker([30.1836,-97.7482],{icon:pkI}).addTo(rm);
+        if(answers.lat){
+          L.marker([answers.lat,answers.lng],{icon:dtI}).addTo(rm);
+          var pts=[[30.1836,-97.7482],[answers.lat,answers.lng]];
+          rm.fitBounds(L.latLngBounds(pts),{padding:[50,50],maxZoom:13});
 
-        // Fetch real road route from OSRM
-        var osrm='https://router.project-osrm.org/route/v1/driving/'
-          +(-97.7482)+','+30.1836+';'+answers.lng+','+answers.lat
-          +'?overview=full&geometries=geojson';
-        fetch(osrm)
-          .then(function(r){return r.json();})
-          .then(function(data){
-            if(data.routes&&data.routes[0]){
-              var coords=data.routes[0].geometry.coordinates;
-              // Update distance with road distance
-              var roadMiles=(data.routes[0].distance/1609.34);
-              var roadSecs=data.routes[0].duration;
-              var roadMins=Math.round(roadSecs/60);
-              var timeLabel=roadMins<60?roadMins+' min':Math.floor(roadMins/60)+'h '+( roadMins%60)+'m';
-              // Update badge
-              var miEl=document.querySelector('#hsc-map-reveal [style*="3.5rem"]');
-              if(miEl)miEl.textContent=roadMiles.toFixed(1)+' mi';
-              var timeEl=document.querySelector('#hsc-map-reveal [style*="1F69B"]');
-              if(timeEl)timeEl.innerHTML='&#x1F69B; '+timeLabel+' by road &nbsp;&middot;&nbsp; '+roadMiles.toFixed(1)+' miles';
-              // Animate route drawing along real roads
-              var route=L.polyline([],{color:'#d4900f',weight:4,opacity:.9}).addTo(rm);
-              var step=0,total=coords.length;
-              var timer=setInterval(function(){
-                step+=Math.ceil(total/50);
-                var slice=coords.slice(0,Math.min(step,total));
-                route.setLatLngs(slice.map(function(c){return[c[1],c[0]];}));
-                if(step>=total){clearInterval(timer);rm.fitBounds(route.getBounds(),{padding:[40,40]});}
-              },30);
-            } else {
-              // Fallback to straight line if OSRM fails
-              var route=L.polyline(pts.map(function(p){return p;}),{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.9}).addTo(rm);
-            }
-          })
-          .catch(function(){
-            // Fallback straight line
-            L.polyline(pts,{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.9}).addTo(rm);
-          });
+          var osrm='https://router.project-osrm.org/route/v1/driving/'
+            +(-97.7482)+','+30.1836+';'+answers.lng+','+answers.lat
+            +'?overview=full&geometries=geojson';
+          fetch(osrm)
+            .then(function(r){return r.json();})
+            .then(function(data){
+              if(data.routes&&data.routes[0]){
+                var coords=data.routes[0].geometry.coordinates;
+                var roadMiles=(data.routes[0].distance/1609.34);
+                var roadSecs=data.routes[0].duration;
+                var roadMins=Math.round(roadSecs/60);
+                var timeLabel=roadMins<60?roadMins+' min':Math.floor(roadMins/60)+'h '+( roadMins%60)+'m';
+                var miEl=document.querySelector('#hsc-map-reveal [style*="3.5rem"]');
+                if(miEl)miEl.textContent=roadMiles.toFixed(1)+' mi';
+                var timeEl=document.querySelector('#hsc-map-reveal [style*="1F69B"]');
+                if(timeEl)timeEl.innerHTML='&#x1F69B; '+timeLabel+' by road &nbsp;&middot;&nbsp; '+roadMiles.toFixed(1)+' miles';
+                var route=L.polyline([],{color:'#d4900f',weight:4,opacity:.9}).addTo(rm);
+                var step=0,total=coords.length;
+                var timer=setInterval(function(){
+                  step+=Math.ceil(total/50);
+                  var slice=coords.slice(0,Math.min(step,total));
+                  route.setLatLngs(slice.map(function(c){return[c[1],c[0]];}));
+                  if(step>=total){clearInterval(timer);rm.fitBounds(route.getBounds(),{padding:[40,40]});}
+                },30);
+              } else {
+                var route=L.polyline(pts.map(function(p){return p;}),{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.9}).addTo(rm);
+              }
+            })
+            .catch(function(){
+              L.polyline(pts,{color:'#d4900f',weight:3,dashArray:'8 6',opacity:.9}).addTo(rm);
+            });
+        }
+      } else {
+        var center=answers.lat?[answers.lat,answers.lng]:[30.1836,-97.7482];
+        rm=L.map('hsc-rmap',{zoomControl:false,scrollWheelZoom:false}).setView(center,13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(rm);
+        if(answers.lat){
+          var dtI2=L.divIcon({html:'<div style="width:18px;height:18px;background:#22c55e;border-radius:50%;border:3px solid #fff;box-shadow:0 0 16px rgba(34,197,94,.9)"></div>',iconSize:[18,18],iconAnchor:[9,9],className:''});
+          L.marker(center,{icon:dtI2}).addTo(rm);
+        }
       }
     }
     btn.onclick=function(){
@@ -401,6 +459,22 @@ function showMapReveal(){
     };
   },80);
 }
+
+function geoNext(){
+  var inp=document.getElementById('ADDRIN');
+  var addr=inp?inp.value.trim():'';
+  answers.addr=addr;
+  if(answers.lat){showMapReveal();return;}
+  if(addr){
+    var nb=document.querySelector('.nxtbtn');
+    if(nb){nb.textContent=lang==='es'?'Buscando... \u23f3':'Locating... \u23f3';nb.disabled=true;}
+    fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(addr+', Texas'))
+      .then(function(r){return r.json();})
+      .then(function(d){if(d&&d.length)pinIt(parseFloat(d[0].lat),parseFloat(d[0].lon));showMapReveal();})
+      .catch(function(){advance();});
+  } else {advance();}
+}
+
 function renderDepth(body,step){
   var q=document.createElement('div');q.className='sq';q.textContent=lang==='es'?step.qes:step.qen;body.appendChild(q);
   var sub=document.createElement('div');sub.className='shint';sub.textContent=lang==='es'?'Desliza para elegir la profundidad de la zanja.':'Slide to set how deep the trench needs to go.';body.appendChild(sub);
